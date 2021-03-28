@@ -40,11 +40,18 @@
 // Tim Adye 28/03/2021 v0.4a
 // update version numbers and tidy up file naming.
 // Compiled with VS2019 for x64.
+// Restore ceezblog's Middle click with 3 fingers Tap and Right with 2 fingers Tap.
+// This is controlled by the program options below (switch 0<->1 for Cyrillev's settings).
 
 
 #include <windows.h>
 #include <tchar.h>
 #include "resource.h"
+
+//Program options
+#define TWOMOUSE_MIDDLE 0
+#define THREEMOUSE_RIGHT 0
+#define THREEMOUSE_MIDDLE 1
 
 //Macro for String
 #define copyString(a,b)	swprintf((a),sizeof(a)/sizeof(*a),L"%s",(b))
@@ -116,7 +123,6 @@ static INT	keyCounter = 0;
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 __declspec(dllexport) LRESULT CALLBACK KBHookProc (int, WPARAM, LPARAM);
 __declspec(dllexport) LRESULT CALLBACK MouseHookProc(int, WPARAM, LPARAM);
-void sendMRight();
 
 
 //////////// FUNCTIONS //////////////
@@ -131,7 +137,12 @@ void ShowContextMenu(HWND hWnd)
 	{
 		InsertMenu(hMenu, -1, MF_BYPOSITION , SM_ABOUTAPP, L"About mMouse 0.4a...");
 		InsertMenu(hMenu, -1, MF_SEPARATOR, WM_APP+3, NULL);
-		InsertMenu(hMenu, -1, (ThreeFingerTap)?MF_CHECKED:MF_UNCHECKED , SM_THREEMOUSE_TAP, L"Middle mouse fix (2 fingers Tap)");
+		InsertMenu(hMenu, -1, (ThreeFingerTap)?MF_CHECKED:MF_UNCHECKED , SM_THREEMOUSE_TAP,
+#if TWOMOUSE_MIDDLE
+                   L"Middle mouse fix (2 fingers Tap)");
+#else
+                   L"Middle mouse fix (3 fingers Tap)");
+#endif
 		InsertMenu(hMenu, -1, (ThreeFingerSwipe)?MF_CHECKED:MF_UNCHECKED , SM_THREEMOUSE_SWIPE, L"Backward / Forward (3 fingers swipe left / right)");
 		InsertMenu(hMenu, -1, (ThreeFingerSwipeUp)?MF_CHECKED : MF_UNCHECKED, SM_THREEMOUSE_SWIPE_UP, L"Open File Explorer (3 fingers swipe up)");
 
@@ -262,7 +273,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	kbhHook = SetWindowsHookEx(WH_KEYBOARD_LL, (HOOKPROC) KBHookProc, hInst, NULL);  
 
 	// setup mouse hook
+#if TWOMOUSE_MIDDLE
 	if (ThreeFingerTap) {mousehHook = SetWindowsHookEx(WH_MOUSE_LL, (HOOKPROC)MouseHookProc, hInst, NULL); }
+#endif
 
 	// Reposition the window
 	int ScreenX=0;
@@ -412,11 +425,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case SM_THREEMOUSE_TAP:
 			ThreeFingerTap = !ThreeFingerTap;
+#if TWOMOUSE_MIDDLE
 			if (ThreeFingerTap) 
 			{ 
 				mousehHook = SetWindowsHookEx(WH_MOUSE_LL, (HOOKPROC)MouseHookProc, hInst, NULL); 
 			}
 			else { UnhookWindowsHookEx(mousehHook); }
+#endif
 			break;
 		case SM_THREEMOUSE_SWIPE:
 			ThreeFingerSwipe = !ThreeFingerSwipe;
@@ -498,9 +513,11 @@ void sendMRightThread()
 		NULL);   // returns the thread identifier 
 }
 
+#if TWOMOUSE_MIDDLE
 // Hook process of mouse hook
 // Process cases of mouse-button to determine when to send mouse button 3,4,5
 // Everything goes here
+// 2-finger tap gives right-click by default, so only need this if we want it to give middle-click.
 __declspec(dllexport) LRESULT CALLBACK MouseHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	
@@ -541,7 +558,7 @@ __declspec(dllexport) LRESULT CALLBACK MouseHookProc(int nCode, WPARAM wParam, L
 			OutputDebugStringA(LPCSTR("kill\n"));
 			return 1; // kiLl the key (retaure if timeout eg real right click)
 			break;
-		
+
 		case WM_RBUTTONUP:
 			OutputDebugStringA(LPCSTR("WM_RBUTTONUP : "));
 			if (timerOn && RButtonDown)
@@ -553,6 +570,7 @@ __declspec(dllexport) LRESULT CALLBACK MouseHookProc(int nCode, WPARAM wParam, L
                 
 				OutputDebugStringA(LPCSTR("Kill\n"));
 				sendMMiddleThread();
+
 				//OutputDebugStringA(LPCSTR("kill\n"));
 				////sendMMiddle(); // dure trop longtemps du coup le clic droit est envoyé
 				//Sleep(300);
@@ -569,6 +587,7 @@ __declspec(dllexport) LRESULT CALLBACK MouseHookProc(int nCode, WPARAM wParam, L
 	//OutputDebugStringA(LPCSTR("Mouse pass\n"));
 	return CallNextHookEx(mousehHook, nCode, wParam, lParam);
 }
+#endif
 
 
 DWORD WINAPI OpenExplorer(LPVOID lpParam)
@@ -794,7 +813,11 @@ __declspec(dllexport) LRESULT CALLBACK KBHookProc (int nCode, WPARAM wParam, LPA
 				Kill_SKey = TRUE; // we have a match 's'
 				OutputDebugStringA(LPCSTR("kill\n"));
 				//sendMMiddle();
+#if THREEMOUSE_RIGHT
 				sendMRightThread();
+#elif THREEMOUSE_MIDDLE
+				sendMMiddleThread();
+#endif
 				return 1; //kill the key
 			}
 			else if (LWinDown)

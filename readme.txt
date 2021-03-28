@@ -1,8 +1,10 @@
-This mMouse v0.2d is brought to you by ceezblog.info - 2015
+mMouse v0.4a - fix middle mouse button for ASUS laptop that runs windows 10
 
 This program will fix the three-finger-tap of ASUS Smart Gesture that open Cortana into middle mouse button.
 For windows 10 users who miss the middle mouse function which likely support by all other laptops but ASUS.
 Work on most ASUS laptops run windows 10 that doesn't allow to to change the option of three-finger gesture. 
+
+mMouse v0.2d is brought to you by ceezblog.info - 2015
 
 Version 0.2a support 3 finger swipe for backward and forward button
 
@@ -23,8 +25,6 @@ Version 0.1
 
 Version 1.0:
 - Recode from scratch
-
-
 
 ------------------------------------------------------------------------------------------------------------
 
@@ -60,3 +60,9 @@ Disable OutputDebugStringA() function
 
 Test : OK with SmartGesture 4.0.9 and 4.0.17
 SmartGesture_Win10_64_VER409 http://dlcdnet.asus.com/pub/ASUS/nb/Apps_for_Win10/SmartGesture/SmartGesture_Win10_64_VER409.zip?_ga=2.172942123.962806994.1504290823-185335011.1500703387
+
+------------------------------------------------------------------------------------------------------------
+
+Tim Adye 28/03/2021 v0.4a
+update version numbers and tidy up file naming.
+Compiled with VS2019 for x64.

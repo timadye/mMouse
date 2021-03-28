@@ -176,7 +176,7 @@ void StopTimeOut()
 	timerOn = FALSE;
 }
 
-void SendKey(DWORD vkKey, cKeyEvent keyevent = KEY_DOWN)
+void SendKey(BYTE vkKey, cKeyEvent keyevent = KEY_DOWN)
 {	
 	DWORD _keyevent = 0x0;
 	if (keyevent == KEY_UP) _keyevent = KEYEVENTF_KEYUP; 
@@ -216,12 +216,12 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	wcex.cbClsExtra     = 0;
 	wcex.cbWndExtra     = 0;
 	wcex.hInstance      = hInstance;
-	wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
+	wcex.hIcon          = LoadIcon(hInstance, IDI_APPLICATION);
 	wcex.hCursor        = LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
 	wcex.lpszMenuName   = NULL;
 	wcex.lpszClassName  = szWindowClass;
-	wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
+	wcex.hIconSm        = LoadIcon(wcex.hInstance, IDI_APPLICATION);
 
 	if (!RegisterClassEx(&wcex)) return 1;
 
@@ -354,23 +354,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		DrawIcon(hdc, 10, 5, hIcon);
 
 		SetTextColor(hdc, RGB(30,160,10)); //green-ish
-		TextOut(hdc, 50, 15, text1, _tcslen(text1));
+		TextOut(hdc, 50, 15, text1, int(_tcslen(text1)));
 		SetTextColor(hdc, RGB(10,20,130)); //blue-ish
-		TextOut(hdc, 10, 110, text5, _tcslen(text5));
+		TextOut(hdc, 10, 110, text5, int(_tcslen(text5)));
 		SetTextColor(hdc, RGB(10,10,10)); //black-ish
-		TextOut(hdc, 10, 45, text2, _tcslen(text2));
-		TextOut(hdc, 10, 65, text3, _tcslen(text3));
-		TextOut(hdc, 10, 85, text4, _tcslen(text4));
-		TextOut(hdc, 10, 130, text6, _tcslen(text6));
-		TextOut(hdc, 10, 150, text7, _tcslen(text7));
-		TextOut(hdc, 10, 170, text8, _tcslen(text8));
-		TextOut(hdc, 220, 195, text0, _tcslen(text0));		
+		TextOut(hdc, 10, 45, text2, int(_tcslen(text2)));
+		TextOut(hdc, 10, 65, text3, int(_tcslen(text3)));
+		TextOut(hdc, 10, 85, text4, int(_tcslen(text4)));
+		TextOut(hdc, 10, 130, text6, int(_tcslen(text6)));
+		TextOut(hdc, 10, 150, text7, int(_tcslen(text7)));
+		TextOut(hdc, 10, 170, text8, int(_tcslen(text8)));
+		TextOut(hdc, 220, 195, text0, int(_tcslen(text0)));		
 		SetTextColor(hdc, RGB(180,80,80)); //red-ish
-		TextOut(hdc, 10, 65, texta, _tcslen(texta));
-		TextOut(hdc, 10, 150, texta, _tcslen(texta));
+		TextOut(hdc, 10, 65, texta, int(_tcslen(texta)));
+		TextOut(hdc, 10, 150, texta, int(_tcslen(texta)));
 		SetTextColor(hdc, RGB(140,140,140)); //gray-ish
-		TextOut(hdc, 50, 65, textb, _tcslen(textb));
-		TextOut(hdc, 50, 150, textb, _tcslen(textb));
+		TextOut(hdc, 50, 65, textb, int(_tcslen(textb)));
+		TextOut(hdc, 50, 150, textb, int(_tcslen(textb)));
 
 		EndPaint(hWnd, &ps);
 		break;

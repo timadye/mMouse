@@ -1,4 +1,7 @@
-// mMouse v0.2c - fix middle mouse button for ASUS laptop that runs windows 10
+// mMouse v0.4a - fix middle mouse button for ASUS laptop that runs windows 10
+//
+// Version history:-
+//
 // ceezblog.info - 29/2/2016
 //
 // different approach with back / next function, just kill TAB of combo ALT-TAB-LEFT/RIGHT
@@ -33,6 +36,10 @@
 // Disable OutputDebugStringA() function
 // Test : OK with SmartGesture 4.0.9 and 4.0.17
 // SmartGesture_Win10_64_VER409 http://dlcdnet.asus.com/pub/ASUS/nb/Apps_for_Win10/SmartGesture/SmartGesture_Win10_64_VER409.zip?_ga=2.172942123.962806994.1504290823-185335011.1500703387
+//
+// Tim Adye 28/03/2021 v0.4a
+// update version numbers and tidy up file naming.
+// Compiled with VS2019 for x64.
 
 
 #include <windows.h>
@@ -40,7 +47,7 @@
 #include "resource.h"
 
 //Macro for String
-#define copyString(a,b)	swprintf(a,L"%s",b)
+#define copyString(a,b)	swprintf((a),sizeof(a)/sizeof(*a),L"%s",(b))
 
 #define TRAY_ICON_ID			5001
 #define SWM_TRAYMSG				WM_APP		//	the message ID sent to our window
@@ -73,7 +80,7 @@ enum cKeyEvent { KEY_UP, KEY_DOWN };
 
 // Global variables
 static TCHAR szWindowClass[] = _T("win32app");
-static TCHAR szTitle[] = _T("About mMouse v0.2c");
+static TCHAR szTitle[] = _T("About mMouse v0.4a");
 static TCHAR szTip[] = _T("mMouse - Middle Mouse for windows 10.\r\n\r\n This program provides Middle Mouse function\r\n which ASUS Smart Gesture fails.");
 
 HINSTANCE hInst;
@@ -122,7 +129,7 @@ void ShowContextMenu(HWND hWnd)
 	HMENU hMenu = CreatePopupMenu();
 	if(hMenu)
 	{
-		InsertMenu(hMenu, -1, MF_BYPOSITION , SM_ABOUTAPP, L"About mMouse 0.2d mod 08/09/2017...");
+		InsertMenu(hMenu, -1, MF_BYPOSITION , SM_ABOUTAPP, L"About mMouse 0.4a...");
 		InsertMenu(hMenu, -1, MF_SEPARATOR, WM_APP+3, NULL);
 		InsertMenu(hMenu, -1, (ThreeFingerTap)?MF_CHECKED:MF_UNCHECKED , SM_THREEMOUSE_TAP, L"Middle mouse fix (2 fingers Tap)");
 		InsertMenu(hMenu, -1, (ThreeFingerSwipe)?MF_CHECKED:MF_UNCHECKED , SM_THREEMOUSE_SWIPE, L"Backward / Forward (3 fingers swipe left / right)");
@@ -199,7 +206,7 @@ void SendMouseClick(DWORD dwFlags, DWORD dx, DWORD dy, DWORD dwData, ULONG_PTR d
 
 // Start point of the program
 // Start keyboard hook, init config dialog and notification icon
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
 	WNDCLASSEX wcex;
 
@@ -319,7 +326,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
 	HDC hdc;
-	TCHAR text1[] = _T("mMouse v0.2d");
+	TCHAR text1[] = _T("mMouse v0.4a");
 	TCHAR text2[] = _T("Touchpad fix for windows 10 Asus laptop, which");
 	TCHAR text3[] = _T("ASUS not-so-Smart gesture epically fails for advanced");
 	TCHAR text4[] =	_T("user like yourself.");
